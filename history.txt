@@ -1,0 +1,12 @@
+
+4.43 alpha 2
+
+	- fix in readme.txt : usage of the LZMA program
+
+	- fix in J7zip : a program can now delete a file after having extracted an archive.
+
+	- BCJ_x86_Decoder filter added
+
+
+4.43 alpha
+	first public release
