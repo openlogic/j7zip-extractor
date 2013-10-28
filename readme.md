@@ -67,16 +67,20 @@ The jar j7zip-extractor.jar
 
 Please read SevenZip\J7zip.java and SevenZip\ArchiveExtractCallback.java as samples. Look at
    
-`SevenZip.Archive.SevenZip.Handler
-SevenZip.Archive.SevenZipEntry
-SevenZip.Archive.IArchiveExtractCallback
-SevenZip.Archive.IInArchive`
+`SevenZip.Archive.SevenZip.Handler`
+
+`SevenZip.Archive.SevenZipEntry`
+
+`SevenZip.Archive.IArchiveExtractCallback`
+
+`SevenZip.Archive.IInArchive`
 
 
 The executable LZMA (this hasn't been tested under the new code)
 ----------------------------------------------------------------
 
   to decompress: 
+  
   `java -cp dist/j7zip-extractor.jar SevenZip.LzmaAlone d file.lzma file`
 
 
@@ -93,6 +97,6 @@ Copyright
 =========
 Marked portions of the code are Copyright (c) by OpenLogic, Inc.
 
-The remaining code is provided from the p7zip project at http://p7zip.sourceforge.net.
+The remaining code is provided by the p7zip project at http://p7zip.sourceforge.net.
 
 All code licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See LGPL.txt for full details.
