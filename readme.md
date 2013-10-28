@@ -33,7 +33,7 @@ How To Compile
 ==============
 With ant (any system with http://ant.apache.org/)
 
-  - remove all built items
+  - remove all build artifacts
     
       `ant clean`
       
