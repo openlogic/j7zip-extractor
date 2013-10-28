@@ -117,14 +117,16 @@ public class ArchiveExtractCallback implements IArchiveExtractCallback // , ICry
     
     public int GetStream(int index,
             java.io.OutputStream [] outStream,
-            int askExtractMode) throws java.io.IOException {
+            // Updated to pass parent_dir argument [GAB, OpenLogic 2013-10-28]
+            int askExtractMode, java.io.File parent_dir) throws java.io.IOException {
         
         outStream[0] = null;
         
         SevenZipEntry item = _archiveHandler.getEntry(index);
         _filePath = item.getName();
         
-        File file = new File(_filePath);
+        // Updated to create the extracted file under the parent_dir directory [GAB, OpenLogic 2013-10-28]
+        File file = new File(parent_dir, _filePath);
         
         switch (askExtractMode) {
             case IInArchive.NExtract_NAskMode_kTest:
@@ -158,7 +160,8 @@ public class ArchiveExtractCallback implements IArchiveExtractCallback // , ICry
                         file.delete();
                     }
                     
-                    java.io.RandomAccessFile outStr = new java.io.RandomAccessFile(_filePath,"rw");
+                    // Write the extracted contents to the file under the parent_dir directory [GAB, OpenLogic 2013-10-28]
+                    java.io.RandomAccessFile outStr = new java.io.RandomAccessFile(file,"rw");
                     
                     if (pos != -1) {
                         outStr.seek(pos);

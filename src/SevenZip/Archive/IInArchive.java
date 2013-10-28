@@ -22,8 +22,10 @@ public interface IInArchive {
     
     int close() throws IOException ;
     
+    // Updated to include parent_dir argument [GAB, OpenLogic 2013-10-28]
     int Extract(int [] indices, int numItems,
-            int testModeSpec, IArchiveExtractCallback extractCallbackSpec) throws java.io.IOException;
+            int testModeSpec, IArchiveExtractCallback extractCallbackSpec, 
+            String parent_dir) throws java.io.IOException;
     
     int Open(IInStream stream) throws IOException;
     

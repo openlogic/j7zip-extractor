@@ -6,6 +6,7 @@ import SevenZip.Archive.IArchiveExtractCallback;
 import SevenZip.Archive.IInArchive;
 
 import Common.BoolVector;
+import java.io.File;
 
 class FolderOutStream extends java.io.OutputStream {
     OutStreamWithCRC _outStreamWithHashSpec;
@@ -21,6 +22,16 @@ class FolderOutStream extends java.io.OutputStream {
     boolean _fileIsOpen;
    
     long _filePos;
+    
+    // Adding parent_dir [GAB, OpenLogic 2013-10-28]
+    File parent_dir;
+
+    // Updated to include parent_dir argument [GAB, OpenLogic 2013-10-28]
+    public FolderOutStream(String parent) {
+        parent_dir = new File(parent);
+        _outStreamWithHashSpec = new OutStreamWithCRC();
+        _outStreamWithHash = _outStreamWithHashSpec;
+    }
 
     public FolderOutStream() {
         _outStreamWithHashSpec = new OutStreamWithCRC();
@@ -47,7 +58,8 @@ class FolderOutStream extends java.io.OutputStream {
         return WriteEmptyFiles();
     }
     
-    int OpenFile() throws java.io.IOException {
+    // Updated to accept parent_dir argument [GAB, OpenLogic 2013-10-28]
+    int OpenFile(java.io.File parent_dir) throws java.io.IOException {
         int askMode;
         if(_extractStatuses.get(_currentIndex))
             askMode = _testMode ?
@@ -61,7 +73,9 @@ class FolderOutStream extends java.io.OutputStream {
         
         // RINOK(_extractCallback->GetStream(_ref2Offset + index, &realOutStream, askMode));
         java.io.OutputStream [] realOutStream2 = new java.io.OutputStream[1]; // TBD
-        int ret = _extractCallback.GetStream(_ref2Offset + index, realOutStream2, askMode);
+
+        // Updated to pass parent_dir argument [GAB, OpenLogic 2013-10-28]
+        int ret = _extractCallback.GetStream(_ref2Offset + index, realOutStream2, askMode, parent_dir);
         if (ret != HRESULT.S_OK) return ret;
          
         java.io.OutputStream realOutStream = realOutStream2[0];
@@ -83,7 +97,7 @@ class FolderOutStream extends java.io.OutputStream {
             FileItem fileInfo = _archiveDatabase.Files.get(index);
             if (!fileInfo.IsAnti && !fileInfo.IsDirectory && fileInfo.UnPackSize != 0)
                 return HRESULT.S_OK;
-            int res = OpenFile();
+            int res = OpenFile(parent_dir);
             if (res != HRESULT.S_OK) return res;
             
             res = _extractCallback.SetOperationResult(
@@ -145,7 +159,8 @@ class FolderOutStream extends java.io.OutputStream {
                     return ;// return realProcessedSize;
                 }
             } else {
-                int res = OpenFile();
+              // Updated to pass parent_dir argument [GAB, OpenLogic 2013-10-28]
+                int res = OpenFile(parent_dir);
                 if (res != HRESULT.S_OK) throw new java.io.IOException("OpenFile : " + res); // return res;
                 _fileIsOpen = true;
                 _filePos = 0;
@@ -165,7 +180,8 @@ class FolderOutStream extends java.io.OutputStream {
                 _fileIsOpen = false;
                 _currentIndex++;
             } else {
-                int res = OpenFile();
+              // Updated to include parent_dir argument [GAB, OpenLogic 2013-10-28]
+                int res = OpenFile(parent_dir);
                 if (res != HRESULT.S_OK) return res;
                 _fileIsOpen = true;
             }

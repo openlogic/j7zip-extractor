@@ -1,3 +1,8 @@
+1.0 j7zip-extractor
+
+ - Added explicit destination directory argument
+ - Removed compression and list functionality temporarily
+ - Removed individual file list argument
 
 4.43 alpha 2
 

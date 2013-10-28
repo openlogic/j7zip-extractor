@@ -73,7 +73,8 @@ public class J7zip {
         }
     }
     
-    static void testOrExtract(IInArchive archive,Vector<String> listOfNames,int mode) throws Exception {
+    // Updated to include parent_dir argument [GAB, OpenLogic 2013-10-28]
+    static void testOrExtract(IInArchive archive,Vector<String> listOfNames,int mode, String parent_dir) throws Exception {
         
         ArchiveExtractCallback extractCallbackSpec = new ArchiveExtractCallback();
         IArchiveExtractCallback extractCallback = extractCallbackSpec;
@@ -83,22 +84,15 @@ public class J7zip {
         try {  
             int len = 0;
             int arrays []  = null;
-            
-            if (listOfNames.size() >= 1) {
-                arrays = new int[listOfNames.size()];
-                for(int i = 0 ; i < archive.size() ; i++) {
-                    if (listOfNames.contains(archive.getEntry(i).getName())) {
-                        arrays[len++] = i;
-                    }
-                }
-            }
-                
+                            
             int res;
             
             if (len == 0) {
-                res = archive.Extract(null, -1, mode , extractCallback);
+              // Updated to pass parent_dir argument [GAB, OpenLogic 2013-10-28]
+                res = archive.Extract(null, -1, mode , extractCallback, parent_dir);
             } else {
-                res = archive.Extract(arrays, len, mode, extractCallback);
+              // Updated to pass parent_dir argument [GAB, OpenLogic 2013-10-28]
+                res = archive.Extract(arrays, len, mode, extractCallback, parent_dir);
             }
             
             if (res == HRESULT.S_OK) {
@@ -115,11 +109,23 @@ public class J7zip {
     }
     
     public static void main(String[] args) throws Exception {
+      // Added parent_dir to store destination directory [GAB, OpenLogic 2013-10-28]
+        String parent_dir;
         System.out.println("\nJ7zip 4.43 ALPHA 2 (" + Runtime.getRuntime().availableProcessors() + " CPUs)");
         
         if (args.length < 2) {
             PrintHelp();
             return ;
+        }
+        
+        // if the user has passed in a destination directory where
+        // the extracted file should be written, use that,
+        // otherwise use the current working directory
+        if (args.length == 3) {
+            parent_dir = args[2];
+        }
+        else {
+            parent_dir = System.getProperty("user.dir");
         }
         
         final int MODE_LISTING = 0;
@@ -128,9 +134,11 @@ public class J7zip {
         
         int mode = -1;
         
+        // this was used to pick out specific files to compress or extract
+        // I'm not using it for our extraction-only tool, but it was too much
+        // of a pain to remove it everywheere so I'm leaving an empty list as
+        // a placeholder.
         Vector<String> listOfNames = new Vector<String>();
-        for (int i = 2;i < args.length ; i++)
-            listOfNames.add(args[i]);
         
         if (args[0].equals("l")) {
             mode = MODE_LISTING;
@@ -161,10 +169,12 @@ public class J7zip {
                 listing(archive,listOfNames,false);
                 break;
             case MODE_TESTING:
-                testOrExtract(archive,listOfNames,IInArchive.NExtract_NAskMode_kTest);
+                // Updated to include parent_dir argument [GAB, OpenLogic 2013-10-28]
+                testOrExtract(archive,listOfNames,IInArchive.NExtract_NAskMode_kTest, parent_dir);
                 break;
             case MODE_EXTRACT:
-                testOrExtract(archive,listOfNames,IInArchive.NExtract_NAskMode_kExtract);
+                // Updated to include parent_dir argument [GAB, OpenLogic 2013-10-28]
+                testOrExtract(archive,listOfNames,IInArchive.NExtract_NAskMode_kExtract, parent_dir);
                 break;
         }
         
