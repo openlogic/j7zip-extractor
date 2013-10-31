@@ -4,6 +4,7 @@ import SevenZip.Archive.SevenZip.Handler;
 import SevenZip.Archive.SevenZipEntry;
 import SevenZip.Archive.IArchiveExtractCallback;
 import SevenZip.Archive.IInArchive;
+import SevenZip.Invalid7zArchiveException;
 
 import java.text.DateFormat;
 
@@ -13,8 +14,7 @@ import java.util.Vector;
 public class J7zip {
     static void PrintHelp() {
         System.out.println(
-                "\nUsage:  JZip <l|t|x> <archive_name> [<file_names>...]\n" +
-                "  l : Lists files\n" +
+                "\nUsage:  JZip <l|t|x> <archive_name> [destination_dir]\n" +
                 "  t : Tests archive.7z\n" +
                 "  x : eXtracts files\n");
     }
@@ -102,6 +102,7 @@ public class J7zip {
                     System.out.println(" " + extractCallbackSpec.NumErrors + " errors");
             } else {
                 System.out.println("ERROR !!");
+                throw new Invalid7zArchiveException("Invalid 7z archive");
             }
         } catch (java.io.IOException e) {
             System.out.println("IO error : " + e.getLocalizedMessage());
@@ -160,8 +161,9 @@ public class J7zip {
         int ret = archive.Open( istream );
         
         if (ret != 0) {
-            System.out.println("ERROR !");
-            return ;
+            // System.out.println("ERROR !");
+            throw new Invalid7zArchiveException("Invalid 7z archive");
+            // return ;
         }
         
         switch(mode) {
